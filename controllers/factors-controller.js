@@ -4,7 +4,7 @@ const Factor = require('../models/Factor');
 const Record = require('../models/Record');
 
 const HttpError = require('../models/http-error');
-const Bioprocess = require('../models/Bioprocess');
+const Project = require('../models/Project');
 
 const ObjectId = require('mongodb').ObjectId;
 
@@ -38,36 +38,36 @@ const getFactorById = async (req, res, next) => {
 // Create a Factor
 const createFactor = async (req, res, next) => {
 
-  const { name, description, isDependent, bioprocessID, type } = req.body;
+  const { name, description, isDependent, projectID, type } = req.body;
 
   const createdFactor = new Factor({
     name,
     description,
     isDependent,
-    bioprocessID,
+    projectID,
     type
   });
 
-  let bioprocess;
+  let project;
   try {
-    bioprocess = await Bioprocess.findById(req.body.bioprocessID, { image: 0 });
+    project = await Project.findById(req.body.projectID, { image: 0 });
 
   } catch (err) {
     const error = new HttpError(
-      'Could not fetch bioprocess, please try again.',
+      'Could not fetch project, please try again.',
       500
     );
     return next(error);
   }
 
-  if (!bioprocess) {
-    const error = new HttpError('Could not find bioprocess for provided id.', 404);
+  if (!project) {
+    const error = new HttpError('Could not find project for provided id.', 404);
     return next(error);
   }
 
   let records;
   try {
-    records = await Record.find({ "bioprocessID": new ObjectId(bioprocess._id) });
+    records = await Record.find({ "projectID": new ObjectId(project._id) });
   } catch (err) {
     const error = new HttpError(
       'Fetching records failed, please try again later.',
@@ -84,8 +84,8 @@ const createFactor = async (req, res, next) => {
     const sess = await mongoose.startSession();
     sess.startTransaction();
     await createdFactor.save({ session: sess });
-    bioprocess.factors.push(createdFactor._id);
-    await bioprocess.save({ session: sess });
+    project.factors.push(createdFactor._id);
+    await project.save({ session: sess });
     for (let index = 0; index < records.length; index++) {
       records[index].values[0] = Object.assign({}, records[index].values[0]);
       await records[index].save({ session: sess });
@@ -127,10 +127,10 @@ const getFactors = async (req, res, next) => {
 
 const deleteFactor = async (req, res, next) => {
   const factorId = req.params.fid;
-  const bioprocessId = req.params.bid;
+  const projectId = req.params.bid;
 
   let factor;
-  let bioprocess;
+  let project;
   try {
     factor = await Factor.findById(factorId);
   } catch (err) {
@@ -142,10 +142,10 @@ const deleteFactor = async (req, res, next) => {
   }
 
   try {
-    bioprocess = await Bioprocess.findById(bioprocessId, { image: 0 });
+    project = await Project.findById(projectId, { image: 0 });
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not find bioprocess.',
+      'Something went wrong, could not find project.',
       500
     );
     return next(error);
@@ -153,7 +153,7 @@ const deleteFactor = async (req, res, next) => {
 
   let records;
   try {
-    records = await Record.find({ "bioprocessID": new ObjectId(bioprocess._id) });
+    records = await Record.find({ "projectID": new ObjectId(project._id) });
   } catch (err) {
     const error = new HttpError(
       'Fetching records failed, please try again later.',
@@ -169,10 +169,10 @@ const deleteFactor = async (req, res, next) => {
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
-    const factorIndex = bioprocess.factors.indexOf(factorId);
-    bioprocess.factors.splice(factorIndex, 1);
+    const factorIndex = project.factors.indexOf(factorId);
+    project.factors.splice(factorIndex, 1);
     await factor.remove({ session: sess });
-    await bioprocess.save();
+    await project.save();
     for (let index = 0; index < records.length; index++) {
       records[index].values[0] = Object.assign({}, records[index].values[0]);
       await records[index].save({ session: sess });
@@ -191,7 +191,7 @@ const deleteFactor = async (req, res, next) => {
 
 const updateFactor = async (req, res, next) => {
 
-  const { name, description, isDependent, bioprocessID, type } = req.body;
+  const { name, description, isDependent, projectID, type } = req.body;
   const factorId = req.params.fid;
 
   let factor;
@@ -208,12 +208,12 @@ const updateFactor = async (req, res, next) => {
   factor.name = name;
   factor.description = description;
   factor.isDependent = isDependent;
-  factor.bioprocessID = bioprocessID;
+  factor.projectID = projectID;
   factor.type = type;
 
   let records;
   try {
-    records = await Record.find({ "bioprocessID": new ObjectId(bioprocessID) });
+    records = await Record.find({ "projectID": new ObjectId(projectID) });
   } catch (err) {
     const error = new HttpError(
       'Fetching records failed, please try again later.',
@@ -259,7 +259,7 @@ const updateFactor = async (req, res, next) => {
 };
 
 const getFactorsFromBio = async (req, res, next) => {
-  const bioprocessId = req.params.bid;
+  const projectId = req.params.bid;
   let factors = [];
   try {
     factors = await Factor.find();
@@ -270,12 +270,12 @@ const getFactorsFromBio = async (req, res, next) => {
     );
     return next(error);
   }
-  let bioprocess = [];
+  let project = [];
   try {
-    bioprocess = await Bioprocess.findById(bioprocessId, { image: 0 });
+    project = await Project.findById(projectId, { image: 0 });
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not fetch bioprocess.',
+      'Something went wrong, could not fetch project.',
       500
     );
     return next(error);
@@ -284,7 +284,7 @@ const getFactorsFromBio = async (req, res, next) => {
   let factorsFromBio = [];
 
   factors.forEach(arrayitem => {
-    if (arrayitem.bioprocessID == bioprocessId) {
+    if (arrayitem.projectID == projectId) {
       factorsFromBio.push(arrayitem);
     }
 

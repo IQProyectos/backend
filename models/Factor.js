@@ -6,7 +6,7 @@ const FactorSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   isDependent: { type: Boolean, required: true },
-  bioprocessID: { type: mongoose.Types.ObjectId, required: true, ref: 'Bioprocess' },
+  projectID: { type: mongoose.Types.ObjectId, required: true, ref: 'Project' },
   type: { type: String, required: true },
   
 });

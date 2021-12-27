@@ -4,8 +4,8 @@ const Schema = mongoose.Schema;
 
 const RecordSchema = new Schema({
   timestamp: { type: String, required: true },
-  bioprocessID: { type: mongoose.Types.ObjectId, required: true, ref: 'Bioprocess' },
-  placeID: { type: mongoose.Types.ObjectId, required: true, ref: 'Place' },
+  projectID: { type: mongoose.Types.ObjectId, required: true, ref: 'Project' },
+  programID: { type: mongoose.Types.ObjectId, required: true, ref: 'Program' },
   values: [{ type: Object, ref: 'Values'}],
 });
 

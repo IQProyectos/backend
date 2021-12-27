@@ -1,7 +1,7 @@
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
-const Place = require('../models/Place');
-const Bioprocess = require('../models/Bioprocess');
+const Program = require('../models/Program');
+const Project = require('../models/Project');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/User');
@@ -9,48 +9,48 @@ const Prediction = require('../models/Prediction');
 
 const createPrediction = async (req, res, next) => {
 
-    const { bioprocessID, placeID, initialDate, finalDate } = req.body;
+    const { projectID, programID, initialDate, finalDate } = req.body;
 
     const createdPrediction = new Prediction({
-        bioprocessID,
-        placeID,
+        projectID,
+        programID,
         initialDate,
         finalDate
     });
 
 
-    let bioprocess;
+    let project;
     try {
-        bioprocess = await Bioprocess.findById(bioprocessID, {image: 0});
+        project = await Project.findById(projectID, {image: 0});
     } catch (err) {
         const error = new HttpError(
-            "Could not fetch bioprocess, please try again.",
+            "Could not fetch project, please try again.",
             500
         );
         return next(error);
     }
 
-    if (!bioprocess) {
+    if (!project) {
         const error = new HttpError(
-            "Could not find bioprocess for provided id.",
+            "Could not find project for provided id.",
             404
         );
         return next(error);
     }
 
-    let place;
+    let program;
     try {
-        place = await Place.findById(placeID, {image: 0});
+        program = await Program.findById(programID, {image: 0});
     } catch (err) {
         const error = new HttpError(
-            "Could not fetch place, please try again.",
+            "Could not fetch program, please try again.",
             500
         );
         return next(error);
     }
 
-    if (!place) {
-        const error = new HttpError("Could not find place for provided id.", 404);
+    if (!program) {
+        const error = new HttpError("Could not find program for provided id.", 404);
         return next(error);
     }
 
@@ -60,7 +60,7 @@ const createPrediction = async (req, res, next) => {
      
     } catch (err) {
       const error = new HttpError(
-        'Creating Place failed, please try again.',
+        'Creating Program failed, please try again.',
         500
       );
       return next(error);
@@ -95,7 +95,7 @@ const getPredictions = async (req, res, next) => {
   
     let predictions;
     try {
-      predictions = await Bioprocess.find({}, {image: 0});
+      predictions = await Project.find({}, {image: 0});
       console.log(predictions);
     } catch (err) {
       console.log(err);

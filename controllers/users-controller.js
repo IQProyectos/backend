@@ -178,7 +178,7 @@ const updateRole = async (req, res, next) => {
 
 const getPermissionsFromBio = async (req, res, next) => {
 
-  const bioprocessId = req.params.bid; 
+  const projectId = req.params.bid; 
   const userId = req.params.uid;
 
   let user;
@@ -200,7 +200,7 @@ const getPermissionsFromBio = async (req, res, next) => {
   console.log(roles, "ROLES");
   for (const role in roles) {
     console.log(roles[role], "bid");
-    if(roles[role].bioprocessId === bioprocessId){
+    if(roles[role].projectId === projectId){
       permissions = roles[role];
       break;
     }

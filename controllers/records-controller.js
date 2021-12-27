@@ -4,19 +4,19 @@ const Factor = require("../models/Factor");
 const Record = require("../models/Record");
 
 const HttpError = require("../models/http-error");
-const Bioprocess = require("../models/Bioprocess");
-const Place = require("../models/Place");
+const Project = require("../models/Project");
+const Program = require("../models/Program");
 
 const ObjectId = require('mongodb').ObjectId;
 
-// Create a Place
+// Create a Program
 const createRecord = async (req, res, next) => {
 
-    const { bioprocessID, placeID, values } = req.body;
+    const { projectID, programID, values } = req.body;
 
     const createdRecord = new Record({
-        bioprocessID,
-        placeID,
+        projectID,
+        programID,
         values
     });
 
@@ -24,8 +24,8 @@ const createRecord = async (req, res, next) => {
 
     values.forEach(arrayitem => {
 
-        arrayitem.bioprocessID = bioprocessID;
-        arrayitem.placeID = placeID;
+        arrayitem.projectID = projectID;
+        arrayitem.programID = programID;
         recordsToCreate.push(arrayitem);
 
     });
@@ -33,38 +33,38 @@ const createRecord = async (req, res, next) => {
     console.log(recordsToCreate);
 
 
-    let bioprocess;
+    let project;
     try {
-        bioprocess = await Bioprocess.findById(bioprocessID, { image: 0 });
+        project = await Project.findById(projectID, { image: 0 });
     } catch (err) {
         const error = new HttpError(
-            "Could not fetch bioprocess, please try again.",
+            "Could not fetch project, please try again.",
             500
         );
         return next(error);
     }
 
-    if (!bioprocess) {
+    if (!project) {
         const error = new HttpError(
-            "Could not find bioprocess for provided id.",
+            "Could not find project for provided id.",
             404
         );
         return next(error);
     }
 
-    let place;
+    let program;
     try {
-        place = await Place.findById(placeID, { image: 0 });
+        program = await Program.findById(programID, { image: 0 });
     } catch (err) {
         const error = new HttpError(
-            "Could not fetch place, please try again.",
+            "Could not fetch program, please try again.",
             500
         );
         return next(error);
     }
 
-    if (!place) {
-        const error = new HttpError("Could not find place for provided id.", 404);
+    if (!program) {
+        const error = new HttpError("Could not find program for provided id.", 404);
         return next(error);
     }
 
@@ -87,26 +87,26 @@ const createRecord = async (req, res, next) => {
 
 };
 
-const getRecordsFromBioXPlace = async (req, res, next) => {
-    const bioprocessId = req.params.bid;
-    const placeId = req.params.pid;
+const getRecordsFromBioXProgram = async (req, res, next) => {
+    const projectId = req.params.bid;
+    const programId = req.params.pid;
 
 
     try {
-        await Bioprocess.findById(bioprocessId, { image: 0 });
+        await Project.findById(projectId, { image: 0 });
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not fetch bioprocess.',
+            'Something went wrong, could not fetch project.',
             500
         );
         return next(error);
     }
 
     try {
-        await Place.findById(placeId, { image: 0 });
+        await Program.findById(programId, { image: 0 });
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not fetch places.',
+            'Something went wrong, could not fetch programs.',
             500
         );
         return next(error);
@@ -114,8 +114,8 @@ const getRecordsFromBioXPlace = async (req, res, next) => {
 
     try {
         records = await Record.find({
-            bioprocessID: new ObjectId(bioprocessId),
-            placeID: new ObjectId(placeId)
+            projectID: new ObjectId(projectId),
+            programID: new ObjectId(programId)
         });
     } catch (err) {
         const error = new HttpError(
@@ -140,7 +140,7 @@ const deleteRecord = async (req, res, next) => {
         record = await Record.findById(recordId);
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not find place.',
+            'Something went wrong, could not find program.',
             500
         );
         return next(error);
@@ -195,26 +195,26 @@ const updateRecord = async (req, res, next) => {
     res.status(200).json({ record: record.toObject({ getters: true }) });
 };
 
-const getNumRecordsFromBioXPlace = async (req, res, next) => {
-    const bioprocessId = req.params.bid;
-    const placeId = req.params.pid;
+const getNumRecordsFromBioXProgram = async (req, res, next) => {
+    const projectId = req.params.bid;
+    const programId = req.params.pid;
 
 
     try {
-        await Bioprocess.findById(bioprocessId, { image: 0 });
+        await Project.findById(projectId, { image: 0 });
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not fetch bioprocess.',
+            'Something went wrong, could not fetch project.',
             500
         );
         return next(error);
     }
 
     try {
-        await Place.findById(placeId, { image: 0 });
+        await Program.findById(programId, { image: 0 });
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not fetch places.',
+            'Something went wrong, could not fetch programs.',
             500
         );
         return next(error);
@@ -223,12 +223,12 @@ const getNumRecordsFromBioXPlace = async (req, res, next) => {
     let factors;
     try {
         factors = await Factor.find({
-            "bioprocessID": new ObjectId(bioprocessId),
+            "projectID": new ObjectId(projectId),
             "type": "value"
         }, "name"); //"name" or {"name": 1}
     } catch (err) {
         const error = new HttpError(
-            'Something went wrong, could not fetch bioprocess.',
+            'Something went wrong, could not fetch project.',
             500
         );
         return next(error);
@@ -237,8 +237,8 @@ const getNumRecordsFromBioXPlace = async (req, res, next) => {
     let records;
     try {
         records = await Record.find({
-            bioprocessID: new ObjectId(bioprocessId),
-            placeID: new ObjectId(placeId)
+            projectID: new ObjectId(projectId),
+            programID: new ObjectId(programId)
         });
     } catch (err) {
         const error = new HttpError(
@@ -275,7 +275,7 @@ const getNumRecordsFromBioXPlace = async (req, res, next) => {
 };
 
 exports.createRecord = createRecord;
-exports.getRecordsFromBioXPlace = getRecordsFromBioXPlace;
+exports.getRecordsFromBioXProgram = getRecordsFromBioXProgram;
 exports.deleteRecord = deleteRecord;
 exports.updateRecord = updateRecord;
-exports.getNumRecordsFromBioXPlace = getNumRecordsFromBioXPlace;
+exports.getNumRecordsFromBioXProgram = getNumRecordsFromBioXProgram;
