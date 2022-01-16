@@ -271,14 +271,6 @@ const deleteProgram = async (req, res, next) => {
     );
     return next(error);
   }
-  console.log(program);
-  if (program.projects.length > 0){
-    const error = new HttpError(
-      'El programa contiene proyectos. No se puede eliminar.',
-      500
-    );
-    return next(error);
-  }
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -292,7 +284,7 @@ const deleteProgram = async (req, res, next) => {
     return next(error);
   }
 
-  res.status(200).json({ message: 'Deleted program.' });
+  res.status(200).json({ message: 'Programa eliminado' });
 }
 
 exports.getProgramById = getProgramById;
