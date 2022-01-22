@@ -2,6 +2,7 @@ const express = require('express');
 const { getPrivateData } = require('../controllers/private'); //Aqui luego hay que cambiarlo por el home
 const notesController = require('../controllers/notes-controller');
 const projectsController = require('../controllers/projects-controller');
+const reportsController = require('../controllers/reports-controller');
 const programsController = require('../controllers/programs-controller');
 const blogsController = require('../controllers/blogs-controller');
 const usersController = require('../controllers/users-controller');
@@ -39,6 +40,7 @@ router.get('/filteredproject/:uid', projectsController.getFilteredProjects);
 router.delete('/project/:bid', projectsController.deleteProject);
 router.patch('/project/:bid', projectsController.updateProject);
 
+
 router.get('/users/', usersController.getUsers);
 router.get('/allUsers/:uid', usersController.getAllUsers);
 router.patch('/users/:uid', usersController.updateUser);
@@ -67,6 +69,15 @@ router.get('/blogproject/:bid', blogsController.getBlogsFromBio);
 router.patch('/blog/:pid', blogsController.updateBlog);
 router.delete('/blog/:pid', blogsController.deleteBlog);
 router.get('/blogPicture/:pid', blogsController.getBlogPicture);
+
+
+
+router.route("/report").post(reportsController.createReport);
+router.get('/report/', reportsController.getReports);
+router.get('/report/:bid', reportsController.getReportById);
+router.get('/filteredreport/:uid', reportsController.getFilteredReports);
+router.delete('/report/:bid', reportsController.deleteReport);
+router.patch('/report/:bid', reportsController.updateReport);
 
 
 router.route("/factor").post(factorsController.createFactor);
