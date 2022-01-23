@@ -3,6 +3,7 @@ const { getPrivateData } = require('../controllers/private'); //Aqui luego hay q
 const notesController = require('../controllers/notes-controller');
 const projectsController = require('../controllers/projects-controller');
 const reportsController = require('../controllers/reports-controller');
+const tasksController = require('../controllers/tasks-controller');
 const programsController = require('../controllers/programs-controller');
 const blogsController = require('../controllers/blogs-controller');
 const usersController = require('../controllers/users-controller');
@@ -39,6 +40,14 @@ router.get('/project/:bid', projectsController.getProjectById);
 router.get('/filteredproject/:uid', projectsController.getFilteredProjects);
 router.delete('/project/:bid', projectsController.deleteProject);
 router.patch('/project/:bid', projectsController.updateProject);
+
+router.patch('/updatePercentage/:bid', tasksController.updatePercentage);
+router.route("/task/:tid").post(tasksController.createTask);
+router.get('/task/', tasksController.getTasks);
+router.get('/showtask/:id', tasksController.getTaskById);
+router.get('/filteredtask/:tid', tasksController.getFilteredTasks);
+router.delete('/task/:bid', tasksController.deleteTask);
+router.patch('/task/:id/:tid', tasksController.updateTask);
 
 
 router.get('/users/', usersController.getUsers);

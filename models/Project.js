@@ -12,10 +12,10 @@ const ProjectSchema = new Schema({
   district: { type: String, required: true },
   definition: { type: String, required: true },
   isTimeSeries: { type: Boolean, required: true },
+  percentage: { type: Number, required: false, default: 0},
   image: { type: String },
   programs: [{ type: Object, ref: 'Program'}],
   factors: [{ type: Object, ref: 'Factor'}]
-  
 });
 
 const Project = mongoose.model('Project', ProjectSchema);

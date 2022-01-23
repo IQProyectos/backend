@@ -34,7 +34,7 @@ const getProjectById = async (req, res, next) => {
 // Create a project
 const createProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country, department,district,definition, isTimeSeries, image, programs, factors} = req.body;
+  const { name, description,objetives,justification,country, department,district,definition, isTimeSeries, image, percentage,programs, factors} = req.body;
 
   const createdProject = new Project({
     name,
@@ -47,6 +47,7 @@ const createProject = async (req, res, next) => {
     definition,
     isTimeSeries,
     image,
+    percentage,
     programs,
     factors
   });
@@ -196,7 +197,7 @@ const deleteProject = async (req, res, next) => {
 
 const updateProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country,department,district,definition, isTimeSeries, image, programs, factors} = req.body;
+  const { name, description,objetives,justification,country,department,district,definition, isTimeSeries, image,percentage, programs, factors} = req.body;
   const projectId = req.params.bid;
 
   let project;
@@ -220,6 +221,7 @@ const updateProject = async (req, res, next) => {
   project.definition = definition;
   project.isTimeSeries = isTimeSeries;
   project.image = image;
+  project.percentage = percentage;
   project.programs = programs;
   project.factors = factors;
 
