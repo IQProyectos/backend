@@ -164,7 +164,6 @@ const updatePercentage = async (req, res, next) => {
 
 const deleteReport = async (req, res, next) => {
   const reportId = req.params.bid;
-
   let report;
   try {
     report = await Report.findById(reportId, {image: 0});
