@@ -6,7 +6,8 @@ const BlogSchema = new Schema({
   name: { type: String, required: true, unique: true },
   entrada: { type: String, required: true },
   image: { type: String},
-  projects: [{ type: Object, ref: 'Project'}]
+  projects: [{ type: Object, ref: 'Project'}],
+  date: { type: String}
   
 });
 

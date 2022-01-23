@@ -81,12 +81,13 @@ router.get('/blogPicture/:pid', blogsController.getBlogPicture);
 
 
 
-router.route("/report").post(reportsController.createReport);
+router.patch('/updatePercentage/:bid', reportsController.updatePercentage);
+router.route("/report/:tid").post(reportsController.createReport);
 router.get('/report/', reportsController.getReports);
-router.get('/report/:bid', reportsController.getReportById);
-router.get('/filteredreport/:uid', reportsController.getFilteredReports);
+router.get('/showreport/:id', reportsController.getReportById);
+router.get('/filteredreport/:tid', reportsController.getFilteredReports);
 router.delete('/report/:bid', reportsController.deleteReport);
-router.patch('/report/:bid', reportsController.updateReport);
+router.patch('/report/:id/:tid', reportsController.updateReport);
 
 
 router.route("/factor").post(factorsController.createFactor);

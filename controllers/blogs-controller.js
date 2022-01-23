@@ -1,10 +1,11 @@
+
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Blog = require('../models/Blog');
 const Project = require('../models/Project');
 const HttpError = require('../models/http-error');
 const User = require('../models/User');
-
+const moment= require('moment') 
 //Get a Blog by ID
 const getBlogById = async (req, res, next) => {
   const blogId = req.params.pid;
@@ -61,13 +62,14 @@ const getBlogPicture = async (req, res, next) => {
 // Create a Blog
 const createBlog = async (req, res, next) => {
 
-  const { name, entrada, image, projects } = req.body;
+  const { name, entrada, image, projects,date } = req.body;
 
   const createdBlog = new Blog({
     name,
     entrada,
     image,
-    projects
+    projects,
+    date: moment().format("DD-MM-YYYY hh:mm:ss")
   });
 
    let user;

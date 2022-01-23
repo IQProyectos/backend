@@ -1,13 +1,15 @@
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Report = require('../models/Report');
+const Project = require('../models/Project');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/User');
+const { getProjectById } = require('./projects-controller');
 
 //Get a report by ID
 const getReportById = async (req, res, next) => {
-  const reportId = req.params.bid;
+  const reportId = req.params.id;
 
   let report;
   try {
@@ -33,22 +35,16 @@ const getReportById = async (req, res, next) => {
 
 // Create a report
 const createReport = async (req, res, next) => {
-
-  const { name, description,objetives,justification,department,district,definition, isTimeSeries, image, programs, factors} = req.body;
+  const projectId = req.params.tid;
+  const { name, description,isTimeSeries, projects} = req.body;
 
   const createdReport = new Report({
     name,
     description,
-    objetives,
-    justification,
-    department,
-    district,
-    definition,
     isTimeSeries,
-    image,
-    programs,
-    factors
+    projects
   });
+  createdReport.projects = projectId
 
    let user;
    try {
@@ -71,7 +67,7 @@ const createReport = async (req, res, next) => {
     const sess = await mongoose.startSession();
     sess.startTransaction();
     await createdReport.save({ session: sess });
-    // user.reports.push(createdReport);
+    // user.reports.push(createdreport);
     await user.save({ session: sess });
     await sess.commitTransaction();
 
@@ -84,6 +80,7 @@ const createReport = async (req, res, next) => {
     return next(error);
   }
   createdReport.image = "";
+
   res.status(201).json({ report: createdReport });
 };
 
@@ -92,7 +89,7 @@ const getReports = async (req, res, next) => {
   let reports;
   try {
     reports = await Report.find({}, {image: 0});
-    console.log(reports);
+    
   } catch (err) {
     console.log(err);
     const error = new HttpError(
@@ -109,24 +106,16 @@ const getReports = async (req, res, next) => {
   });
 };
 
+
 const getFilteredReports = async (req, res, next) => {
-  const userId = req.params.uid;
+  const projectId = req.params.tid;
   let reports;
   try {
-    reports = await Report.find({}, {image: 0});
+    reports = await Report.find({projects:projectId}, {image: 0});
+    console.log(reports);
   } catch (err) {
     const error = new HttpError(
       'Fetching reports failed, please try again later.',
-      500
-    );
-    return next(error);
-  }
-  let user;
-  try {
-    user = await User.findById(userId, {image: 0});
-  } catch (err) {
-    const error = new HttpError(
-      'Something went wrong, could not fetch user.',
       500
     );
     return next(error);
@@ -135,27 +124,43 @@ const getFilteredReports = async (req, res, next) => {
   reports.forEach(function (arrayitem){
     bioIdArray.push(arrayitem.id);
   });
-  
-  console.log(user);
-  if(user && reports && user.roles.length > 0){
-    var roles = Object.values(user.roles);
-    roles.forEach(function (arrayitem){
-      if(bioIdArray.includes(arrayitem.reportId)){ 
-        reports.splice(bioIdArray.indexOf(arrayitem.reportId),1);
-        bioIdArray.splice(bioIdArray.indexOf(arrayitem.reportId),1);
-      }
-    });
-  }
-
-  
-    
-
   res.json({
     reports: reports.map(user =>
       user.toObject({ getters: true })
     )
   });
 };
+
+const updatePercentage = async (req, res, next) => {
+  const projectId = req.params.bid;
+
+  let reports = await Report.countDocuments({projects:projectId}, {image: 0});
+  let completereports = await Report.countDocuments({isTimeSeries: true,projects:projectId}, {image: 0});
+  const percentage = ((100/reports)*completereports).toFixed(2);
+
+  let project
+  try {
+    project = await Project.findOneAndUpdate({_id:projectId},{percentage:percentage});
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update project.',
+      500
+    );
+    return next(error);
+  }
+  try {
+    await project.save();
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not update project.',
+      500
+    );
+    return next(error);
+  }
+  project.image = "";
+  res.status(200).json({ project: project.toObject({ getters: true }) });
+}
+
 
 const deleteReport = async (req, res, next) => {
   const reportId = req.params.bid;
@@ -166,13 +171,6 @@ const deleteReport = async (req, res, next) => {
   } catch (err) {
     const error = new HttpError(
       'Something went wrong, could not find report.',
-      500
-    );
-    return next(error);
-  }
-  if (report.factors.length > 0){
-    const error = new HttpError(
-      'El proyecto contiene datos. No se puede eliminar.',
       500
     );
     return next(error);
@@ -189,14 +187,17 @@ const deleteReport = async (req, res, next) => {
     );
     return next(error);
   }
-
   res.status(200).json({ message: 'Deleted report.' });
 }
 
+
+
+
 const updateReport = async (req, res, next) => {
 
-  const { name, description,objetives,justification,department,district,definition, isTimeSeries, image, programs, factors} = req.body;
-  const reportId = req.params.bid;
+  const { name, description,isTimeSeries} = req.body;
+  const reportId = req.params.id;
+  const projectId = req.params.tid;
 
   let report;
   try {
@@ -211,15 +212,8 @@ const updateReport = async (req, res, next) => {
 
   report.name = name;
   report.description = description;
-  report.objetives = objetives;
-  report.justification = justification;
-  report.department = department;
-  report.district = district;
-  report.definition = definition;
   report.isTimeSeries = isTimeSeries;
-  report.image = image;
-  report.programs = programs;
-  report.factors = factors;
+  report.projects = projectId;
 
   try {
     await report.save();
@@ -240,3 +234,4 @@ exports.getReports = getReports;
 exports.getFilteredReports = getFilteredReports;
 exports.deleteReport = deleteReport;
 exports.updateReport = updateReport;
+exports.updatePercentage = updatePercentage;
