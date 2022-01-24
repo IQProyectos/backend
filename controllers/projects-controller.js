@@ -1,6 +1,7 @@
 const { validationResult } = require('express-validator');
 const mongoose = require('mongoose');
 const Project = require('../models/Project');
+const Task = require('../models/Task');
 
 const HttpError = require('../models/http-error');
 const User = require('../models/User');
@@ -34,7 +35,7 @@ const getProjectById = async (req, res, next) => {
 // Create a project
 const createProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country, department,district,definition, isTimeSeries, image, percentage,programs, factors} = req.body;
+  const { name, description,objetives,justification,country, department,district,definition, isTimeSeries, image, percentage,totalDays,nowDays,programs, factors} = req.body;
 
   const createdProject = new Project({
     name,
@@ -48,6 +49,8 @@ const createProject = async (req, res, next) => {
     isTimeSeries,
     image,
     percentage,
+    totalDays,
+    nowDays,
     programs,
     factors
   });
@@ -197,7 +200,7 @@ const deleteProject = async (req, res, next) => {
 
 const updateProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country,department,district,definition, isTimeSeries, image,percentage, programs, factors} = req.body;
+  const { name, description,objetives,justification,country,department,district,definition, isTimeSeries, image,percentage,totalDays,nowDays, programs, factors} = req.body;
   const projectId = req.params.bid;
 
   let project;
@@ -222,6 +225,8 @@ const updateProject = async (req, res, next) => {
   project.isTimeSeries = isTimeSeries;
   project.image = image;
   project.percentage = percentage;
+  project.totalDays = totalDays;
+  project.nowDays = nowDays;
   project.programs = programs;
   project.factors = factors;
 

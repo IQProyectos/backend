@@ -36,16 +36,21 @@ const getTaskById = async (req, res, next) => {
 // Create a task
 const createTask = async (req, res, next) => {
   const projectId = req.params.tid;
-  const { name, description,isTimeSeries, projects} = req.body;
+  const { name, description,diasNecesarios,isTimeSeries,projects} = req.body;
 
   const createdTask = new Task({
     name,
     description,
+    diasNecesarios,
     isTimeSeries,
     projects
   });
+  
   createdTask.projects = projectId
-
+  const project = await Project.findById(projectId, {image: 0});
+  let countTask = await Task.countDocuments({projects:projectId}, {image: 0});
+  let val = project.totalDays + createdTask.diasNecesarios
+  await Project.findOneAndUpdate({_id:projectId},{totalDays:val,totalTasks:(countTask+1)})
    let user;
    try {
      user = await User.findById(req.userData.userId, {image: 0});
@@ -131,6 +136,9 @@ const getFilteredTasks = async (req, res, next) => {
   });
 };
 
+
+
+
 const updatePercentage = async (req, res, next) => {
   const projectId = req.params.bid;
 
@@ -164,8 +172,8 @@ const updatePercentage = async (req, res, next) => {
 
 const deleteTask = async (req, res, next) => {
   const taskId = req.params.bid;
-
   let task;
+  let projectId;
   try {
     task = await Task.findById(taskId, {image: 0});
   } catch (err) {
@@ -175,6 +183,21 @@ const deleteTask = async (req, res, next) => {
     );
     return next(error);
   }
+
+  // actualiza las estadísticas del proyecto con cada Delete.
+  projectId = task.projects;
+  const project = await Project.findById(projectId, {image: 0});
+  let countTask = await Task.countDocuments({projects:projectId}, {image: 0});
+  if(project.totalDays){
+  let total = project.totalDays - task.diasNecesarios
+  let now = project.nowDays - task.diasCompletados
+  await Project.findOneAndUpdate(
+    {_id:projectId},
+    {totalDays:total,
+    nowDays:now,
+    totalTasks:(countTask-1)} 
+    )
+    }
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -187,6 +210,18 @@ const deleteTask = async (req, res, next) => {
     );
     return next(error);
   }
+
+ // actualiza el % de tareas del proyecto con cada Delete.
+
+  
+  let tasks = await Task.countDocuments({projects:projectId}, {image: 0});
+  if(tasks){let completetasks = await Task.countDocuments({isTimeSeries: true,projects:projectId}, {image: 0});
+  const percentage = ((100/tasks)*completetasks).toFixed(2);
+  await Project.findOneAndUpdate({_id:projectId},{percentage:percentage});}
+  else{
+    await Project.findOneAndUpdate({_id:projectId},{percentage:0});
+  }
+
   res.status(200).json({ message: 'Deleted task.' });
 }
 
@@ -195,10 +230,9 @@ const deleteTask = async (req, res, next) => {
 
 const updateTask = async (req, res, next) => {
 
-  const { name, description,isTimeSeries} = req.body;
+  const { name, description,diasCompletados, isTimeSeries} = req.body;
   const taskId = req.params.id;
   const projectId = req.params.tid;
-
   let task;
   try {
     task = await Task.findById(taskId, {image: 0});
@@ -209,12 +243,19 @@ const updateTask = async (req, res, next) => {
     );
     return next(error);
   }
+  const project = await Project.findById(projectId, {image: 0});
+  
+
+  let result = diasCompletados - task.diasCompletados
+  await Project.findOneAndUpdate({_id:projectId},{nowDays:(project.nowDays+result)});
 
   task.name = name;
   task.description = description;
+  task.diasCompletados = diasCompletados;
   task.isTimeSeries = isTimeSeries;
   task.projects = projectId;
 
+  
   try {
     await task.save();
   } catch (err) {

@@ -79,8 +79,6 @@ router.patch('/blog/:pid', blogsController.updateBlog);
 router.delete('/blog/:pid', blogsController.deleteBlog);
 router.get('/blogPicture/:pid', blogsController.getBlogPicture);
 
-
-
 router.patch('/updatePercentage/:bid', reportsController.updatePercentage);
 router.route("/report/:tid").post(reportsController.createReport);
 router.get('/report/', reportsController.getReports);
