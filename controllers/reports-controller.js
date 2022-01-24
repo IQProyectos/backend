@@ -46,7 +46,9 @@ const createReport = async (req, res, next) => {
     projectName,
     date: moment().format("DD-MM-YYYY hh:mm:ss"),
   });
+  let project = await Project.findById(projectId, {image: 0});
   createdReport.projects = projectId
+  createdReport.projectName = project.name
 
    let user;
    try {
