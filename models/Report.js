@@ -9,6 +9,12 @@ const ReportSchema = new Schema({
   projects: [{ type: Object, ref: 'Project'}],
   projectName: { type: String, required: false },
   date: { type: String},
+  notesReport : { type: String},
+  cost: { type: String},
+  valuesReport: { type: String},
+  data: { type: String},
+
+
 });
 
 const Report = mongoose.model('Report', ReportSchema);

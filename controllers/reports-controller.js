@@ -36,8 +36,8 @@ const getReportById = async (req, res, next) => {
 // Create a report
 const createReport = async (req, res, next) => {
   const projectId = req.params.tid;
-  const { name, description,isTimeSeries, projects,projectName,date} = req.body;
-
+  const { name, description,isTimeSeries, projects,projectName,date, notesReport, cost, valuesReport,data} = req.body;
+  
   const createdReport = new Report({
     name,
     description,
@@ -45,6 +45,10 @@ const createReport = async (req, res, next) => {
     projects,
     projectName,
     date: moment().format("DD-MM-YYYY hh:mm:ss"),
+    notesReport,
+    cost,
+    valuesReport,
+    data,
   });
   let project = await Project.findById(projectId, {image: 0});
   createdReport.projects = projectId
@@ -198,7 +202,7 @@ const deleteReport = async (req, res, next) => {
 
 const updateReport = async (req, res, next) => {
 
-  const { name, description,isTimeSeries} = req.body;
+  const { name, description,isTimeSeries, notesReport, cost, valuesReport,data} = req.body;
   const reportId = req.params.id;
   const projectId = req.params.tid;
 
@@ -217,6 +221,10 @@ const updateReport = async (req, res, next) => {
   report.description = description;
   report.isTimeSeries = isTimeSeries;
   report.projects = projectId;
+  report.notesReport = notesReport;
+  report.cost = cost;
+  report.valuesReport = valuesReport;
+  report.data = data;
 
   try {
     await report.save();
