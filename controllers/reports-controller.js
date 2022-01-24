@@ -6,7 +6,7 @@ const Project = require('../models/Project');
 const HttpError = require('../models/http-error');
 const User = require('../models/User');
 const { getProjectById } = require('./projects-controller');
-
+const moment= require('moment')
 //Get a report by ID
 const getReportById = async (req, res, next) => {
   const reportId = req.params.id;
@@ -36,13 +36,15 @@ const getReportById = async (req, res, next) => {
 // Create a report
 const createReport = async (req, res, next) => {
   const projectId = req.params.tid;
-  const { name, description,isTimeSeries, projects} = req.body;
+  const { name, description,isTimeSeries, projects,projectName,date} = req.body;
 
   const createdReport = new Report({
     name,
     description,
     isTimeSeries,
-    projects
+    projects,
+    projectName,
+    date: moment().format("DD-MM-YYYY hh:mm:ss"),
   });
   createdReport.projects = projectId
 

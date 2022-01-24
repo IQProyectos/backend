@@ -6,7 +6,8 @@ const ReportSchema = new Schema({
   name: { type: String, required: true },
   description: { type: String, required: true },
   isTimeSeries: { type: Boolean, required: true },
-  projects: [{ type: Object, ref: 'Project'}]
+  projects: [{ type: Object, ref: 'Project'}],
+  date: { type: String}
 });
 
 const Report = mongoose.model('Report', ReportSchema);
