@@ -9,6 +9,7 @@ const organizationsController = require('../controllers/organizations-controller
 const resourcesController = require('../controllers/resources-controller');
 const evidencesController = require('../controllers/evidences-controller');
 const blogsController = require('../controllers/blogs-controller');
+const noticesController = require('../controllers/notices-controller');
 const usersController = require('../controllers/users-controller');
 const factorsController = require('../controllers/factors-controller');
 const recordsController = require('../controllers/records-controller');
@@ -136,5 +137,16 @@ router.get('/fetchImage/:file(*)', upload_fileController.getImage);
 
 router.route("/prediction").post(predictionController.createPrediction);
 router.get('/prediction/', predictionController.getPredictions);
+
+router.route("/notice").post(noticesController.createNotice);
+router.get('/notice/:pid', noticesController.getNoticeById);
+router.get('/notice/', noticesController.getNotices);
+router.get('/filterednoticeg/:bid', noticesController.getFilteredNotices);
+router.get('/noticeproject/:bid', noticesController.getNoticesFromBio);
+router.patch('/notice/:pid', noticesController.updateNotice);
+router.delete('/notice/:pid', noticesController.deleteNotice);
+router.get('/noticePicture/:pid', noticesController.getNoticePicture);
+
+
 
 module.exports = router;
