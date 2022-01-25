@@ -5,6 +5,9 @@ const projectsController = require('../controllers/projects-controller');
 const reportsController = require('../controllers/reports-controller');
 const tasksController = require('../controllers/tasks-controller');
 const programsController = require('../controllers/programs-controller');
+const organizationsController = require('../controllers/organizations-controller');
+const resourcesController = require('../controllers/resources-controller');
+const evidencesController = require('../controllers/evidences-controller');
 const blogsController = require('../controllers/blogs-controller');
 const noticesController = require('../controllers/notices-controller');
 const usersController = require('../controllers/users-controller');
@@ -70,6 +73,33 @@ router.get('/programproject/:bid', programsController.getProgramsFromBio);
 router.patch('/program/:pid', programsController.updateProgram);
 router.delete('/program/:pid', programsController.deleteProgram);
 router.get('/programPicture/:pid', programsController.getProgramPicture);
+
+router.route("/organization").post(organizationsController.createOrganization);
+router.get('/organization/:pid', organizationsController.getOrganizationById);
+router.get('/organization/', organizationsController.getOrganizations);
+router.get('/filteredorganization/:bid', organizationsController.getFilteredOrganizations);
+router.get('/organizationproject/:bid', organizationsController.getOrganizationsFromBio);
+router.patch('/organization/:pid', organizationsController.updateOrganization);
+router.delete('/organization/:pid', organizationsController.deleteOrganization);
+router.get('/organizationPicture/:pid', organizationsController.getOrganizationPicture);
+
+router.route("/resource").post(resourcesController.createResource);
+router.get('/resource/:pid', resourcesController.getResourceById);
+router.get('/resource/', resourcesController.getResources);
+router.get('/filteredresource/:bid', resourcesController.getFilteredResources);
+router.get('/resourceproject/:bid', resourcesController.getResourcesFromBio);
+router.patch('/resource/:pid', resourcesController.updateResource);
+router.delete('/resource/:pid', resourcesController.deleteResource);
+router.get('/resourcePicture/:pid', resourcesController.getResourcePicture);
+
+router.route("/evidence").post(evidencesController.createEvidence);
+router.get('/evidence/:pid', evidencesController.getEvidenceById);
+router.get('/evidence/', evidencesController.getEvidences);
+router.get('/filteredevidence/:bid', evidencesController.getFilteredEvidences);
+router.get('/evidenceproject/:bid', evidencesController.getEvidencesFromBio);
+router.patch('/evidence/:pid', evidencesController.updateEvidence);
+router.delete('/evidence/:pid', evidencesController.deleteEvidence);
+router.get('/evidencePicture/:pid', evidencesController.getEvidencePicture);
 
 router.route("/blog").post(blogsController.createBlog);
 router.get('/blog/:pid', blogsController.getBlogById);
