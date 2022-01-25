@@ -14,7 +14,6 @@ const ReportSchema = new Schema({
   valuesReport: { type: String},
   data: { type: String},
 
-
 });
 
 const Report = mongoose.model('Report', ReportSchema);
