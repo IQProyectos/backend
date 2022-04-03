@@ -35,7 +35,7 @@ const getProjectById = async (req, res, next) => {
 // Create a project
 const createProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country, department,district, isTimeSeries, image, percentage,totalDays,nowDays,programs, factors} = req.body;
+  const { name, description,objetives,justification,country, department,district, isTimeSeries, image, percentage,totalDays,nowDays,programs, factors, laboratorio} = req.body;
 
   const createdProject = new Project({
     name,
@@ -51,7 +51,8 @@ const createProject = async (req, res, next) => {
     totalDays,
     nowDays,
     programs,
-    factors
+    factors,
+    laboratorio
   });
 
    let user;

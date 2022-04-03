@@ -17,7 +17,8 @@ const ProjectSchema = new Schema({
   totalTasks:{ type: Number, required: false, default: 0},
   image: { type: String },
   programs: [{ type: Object, ref: 'Program'}],
-  factors: [{ type: Object, ref: 'Factor'}]
+  factors: [{ type: Object, ref: 'Factor'}],
+  laboratorio: { type: String}
 });
 
 const Project = mongoose.model('Project', ProjectSchema);
