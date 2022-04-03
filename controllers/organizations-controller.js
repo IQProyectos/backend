@@ -15,7 +15,7 @@ const getOrganizationById = async (req, res, next) => {
     organization = await Organization.findById(organizationId);
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not find a Organization.',
+      'Something went wrong, could not find a Laboratory.',
       500
     );
     return next(error);
@@ -23,7 +23,7 @@ const getOrganizationById = async (req, res, next) => {
 
   if (!organization) {
     const error = new HttpError(
-      'Could not find Organization for the provided id.',
+      'Could not find Laboratory for the provided id.',
       404
     );
     return next(error);
@@ -41,7 +41,7 @@ const getOrganizationPicture = async (req, res, next) => {
     organization = await Organization.findById(organizationId, {image: 1, _id: 0});
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not find a Organization.',
+      'Something went wrong, could not find a Laboratory.',
       500
     );
     return next(error);
@@ -49,7 +49,7 @@ const getOrganizationPicture = async (req, res, next) => {
 
   if (!organization) {
     const error = new HttpError(
-      'Could not find Organization for the provided id.',
+      'Could not find Laboratory for the provided id.',
       404
     );
     return next(error);
@@ -77,7 +77,7 @@ const createOrganization = async (req, res, next) => {
     
    } catch (err) {
      const error = new HttpError(
-       'Creating Organization failed, please try again.',
+       'Creating Laboratory failed, please try again.',
        500
      );
      return next(error);
@@ -97,7 +97,7 @@ const createOrganization = async (req, res, next) => {
 
   } catch (err) {
     const error = new HttpError(
-      'Creating Organization failed, please try again.' + err,
+      'Creating Laboratory failed, please try again.' + err,
       500
     );
     console.log(err);
@@ -114,7 +114,7 @@ const getOrganizations = async (req, res, next) => {
     organizations = await Organization.find({}, {image: 0});
   } catch (err) {
     const error = new HttpError(
-      'Fetching organizations failed, please try again later.',
+      'Fetching Laboratorys failed, please try again later.',
       500
     );
     return next(error);
@@ -133,7 +133,7 @@ const getFilteredOrganizations = async (req, res, next) => {
     organizations = await Organization.find({}, {image: 0});
   } catch (err) {
     const error = new HttpError(
-      'Fetching organizations failed, please try again later.',
+      'Fetching Laboratorys failed, please try again later.',
       500
     );
     return next(error);
@@ -156,7 +156,7 @@ const getOrganizationsFromBio = async (req, res, next) => {
     organizations = await Organization.find({}, {image: 0});
   } catch (err) {
     const error = new HttpError(
-      'Fetching organizations failed, please try again later.',
+      'Fetching Laboratorys failed, please try again later.',
       500
     );
     return next(error);
@@ -184,7 +184,7 @@ const updateOrganization = async (req, res, next) => {
     organization = await Organization.findById(organizationId, {image: 0});
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not update organization.',
+      'Something went wrong, could not update Laboratory.',
       500
     );
     return next(error);
@@ -200,7 +200,7 @@ const updateOrganization = async (req, res, next) => {
     await organization.save();
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not update organization.',
+      'Something went wrong, could not update Laboratory.',
       500
     );
     return next(error);
@@ -217,7 +217,7 @@ const deleteOrganization = async (req, res, next) => {
     organization = await Organization.findById(organizationId, {image: 0});
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not find organization.',
+      'Something went wrong, could not find Laboratory.',
       500
     );
     return next(error);
@@ -229,13 +229,13 @@ const deleteOrganization = async (req, res, next) => {
     await sess.commitTransaction();
   } catch (err) {
     const error = new HttpError(
-      'Something went wrong, could not delete organization.',
+      'Something went wrong, could not delete Laboratory.',
       500
     );
     return next(error);
   }
 
-  res.status(200).json({ message: 'Organizationa eliminado' });
+  res.status(200).json({ message: 'Laboratorio eliminado' });
 }
 
 exports.getOrganizationById = getOrganizationById;

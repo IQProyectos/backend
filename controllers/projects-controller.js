@@ -35,7 +35,7 @@ const getProjectById = async (req, res, next) => {
 // Create a project
 const createProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country, department,district,definition, isTimeSeries, image, percentage,totalDays,nowDays,programs, factors} = req.body;
+  const { name, description,objetives,justification,country, department,district, isTimeSeries, image, percentage,totalDays,nowDays,programs, factors} = req.body;
 
   const createdProject = new Project({
     name,
@@ -45,7 +45,6 @@ const createProject = async (req, res, next) => {
     country,
     department,
     district,
-    definition,
     isTimeSeries,
     image,
     percentage,
@@ -61,6 +60,7 @@ const createProject = async (req, res, next) => {
     
    } catch (err) {
      const error = new HttpError(
+       console.log(err),
        'Creating project failed, please try again.',
        500
      );
@@ -200,7 +200,7 @@ const deleteProject = async (req, res, next) => {
 
 const updateProject = async (req, res, next) => {
 
-  const { name, description,objetives,justification,country,department,district,definition, isTimeSeries, image,percentage,totalDays,nowDays, programs, factors} = req.body;
+  const { name, description,objetives,justification,country,department,district, isTimeSeries, image,percentage,totalDays,nowDays, programs, factors} = req.body;
   const projectId = req.params.bid;
 
   let project;
@@ -221,7 +221,6 @@ const updateProject = async (req, res, next) => {
   project.country = country;
   project.department = department;
   project.district = district;
-  project.definition = definition;
   project.isTimeSeries = isTimeSeries;
   project.image = image;
   project.percentage = percentage;
