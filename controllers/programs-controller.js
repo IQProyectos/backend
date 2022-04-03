@@ -176,18 +176,20 @@ const getFilteredPrograms = async (req, res, next) => {
       }
     });
   }
-
-  if (user.roles.length > 0){
-    programs.forEach(function (item, index, array){
-      user.roles.forEach(function (role){
-        if (item.name === role.projectName){
-          programs.splice(index, 1)
-        }
-      });
-    });
-
+  if(user){
+    if(user.roles !== undefined || user.roles !== null){
+      if (user.roles.length > 0){
+        programs.forEach(function (item, index, array){
+          user.roles.forEach(function (role){
+            if (item.name === role.projectName){
+              programs.splice(index, 1)
+            }
+          });
+        });
+      }
+    }
   }
-
+  
   res.json({
     programs: programs.map(program =>
       program.toObject({ getters: true })
