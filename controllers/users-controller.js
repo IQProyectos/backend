@@ -50,6 +50,28 @@ const getUsers = async (req, res, next) => {
     });
 };
 
+const getGestores = async (req, res, next) => {
+  
+  let users;
+  try {
+    users = await User.find({}, {image: 0});
+    users = users.filter(user => user.type === 'gestor');
+
+  } catch (err) {
+    const error = new HttpError(
+      'Fetching users failed, please try again later.',
+      500
+    );
+    return next(error);
+  }
+
+  res.json({
+    users: users.map(user =>
+      user.toObject({ getters: true })
+    )
+  });
+};
+
 const getAllUsers = async (req, res, next) => {
   const userId = req.params.uid;
   let users;
@@ -204,6 +226,7 @@ const getPermissionsFromBio = async (req, res, next) => {
 
 
 exports.getUsers = getUsers;
+exports.getGestores = getGestores;
 exports.getAllUsers = getAllUsers;
 exports.updateUser = updateUser;
 exports.deleteUser = deleteUser;
