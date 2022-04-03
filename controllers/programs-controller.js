@@ -132,6 +132,7 @@ const getPrograms = async (req, res, next) => {
 
 const getFilteredPrograms = async (req, res, next) => {
   const projectId = req.params.bid;
+  const userId = req.params.bid;
   let programs;
   try {
     programs = await Program.find({}, {image: 0});
@@ -152,6 +153,16 @@ const getFilteredPrograms = async (req, res, next) => {
     );
     return next(error);
   }
+  let user;
+  try {
+    user = await User.findById(userId, {image: 0});
+  } catch (err) {
+    const error = new HttpError(
+      'Something went wrong, could not fetch user.',
+      500
+    );
+    return next(error);
+  }
   var programIdArray = [];
   programs.forEach(function (arrayitem){
     programIdArray.push(arrayitem.id);
@@ -160,11 +171,21 @@ const getFilteredPrograms = async (req, res, next) => {
   if(project && programs){
     project.programs.forEach(function (arrayitem){
       if(programIdArray.includes(arrayitem)){ 
-        console.log("lo encontró");
         programs.splice(programIdArray.indexOf(arrayitem),1);
         programIdArray.splice(programIdArray.indexOf(arrayitem),1);
       }
     });
+  }
+
+  if (user.roles.length > 0){
+    programs.forEach(function (item, index, array){
+      user.roles.forEach(function (role){
+        if (item.name === role.projectName){
+          programs.splice(index, 1)
+        }
+      });
+    });
+
   }
 
   res.json({

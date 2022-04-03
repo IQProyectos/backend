@@ -55,6 +55,7 @@ router.patch('/task/:id/:tid', tasksController.updateTask);
 
 
 router.get('/users/', usersController.getUsers);
+router.get('/gestores', usersController.getGestores);
 router.get('/allUsers/:uid', usersController.getAllUsers);
 router.patch('/users/:uid', usersController.updateUser);
 router.delete('/users/:uid', usersController.deleteUser);
